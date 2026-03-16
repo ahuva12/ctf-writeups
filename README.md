@@ -20,14 +20,14 @@ Each writeup describes the thought process, analysis steps, and the final soluti
 
 Writeups are organized by challenge category, such as:
 
--Binary Exploitation
--Reverse Engineering
+- Binary Exploitation
+- Reverse Engineering
 
 Each challenge directory typically includes:
 
-writeup.md – a detailed explanation of the solution
+- writeup.md - a detailed explanation of the solution
 
-screenshots/ – relevant screenshots from the analysis process
+- screenshots/ - relevant screenshots from the analysis process
 
 More challenges and categories will be added as I continue learning and solving new CTFs.
 
@@ -38,8 +38,8 @@ More challenges and categories will be added as I continue learning and solving 
 Challenges currently come from platforms such as:
 
 * picoCTF
-*pwn.college
-*other public CTF platforms
+* pwn.college
+* other public CTF platforms
 
 More writeups will be added as I continue learning and solving new challenges.
 
