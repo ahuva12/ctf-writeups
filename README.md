@@ -26,7 +26,6 @@ Writeups are organized by challenge category, such as:
 Each challenge directory typically includes:
 
 - writeup.md - a detailed explanation of the solution
-
 - screenshots/ - relevant screenshots from the analysis process
 
 More challenges and categories will be added as I continue learning and solving new CTFs.
