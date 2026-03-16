@@ -46,9 +46,13 @@ More writeups will be added as I continue learning and solving new challenges.
 
 ## Disclaimer
 
-These writeups are intended **for educational purposes only**, in order to study common vulnerability classes and how they can be analyzed and mitigated.
+All writeups and screenshots in this repository are shared for **educational purposes only**.  
+
+Screenshots were taken from public CTF platforms, such as picoCTF and pwn.college, and the writeups show the process I followed to learn about common vulnerabilities and exploitation techniques.  
+
+This repository is **not intended for commercial use** or to share answers for active challenges.  
 
 ---
 
-Thanks for visiting this repository.
+Thanks for visiting and happy learning! 🙂
 
