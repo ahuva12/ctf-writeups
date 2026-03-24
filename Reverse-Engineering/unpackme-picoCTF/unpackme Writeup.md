@@ -37,7 +37,7 @@ The issue is that the binary is packed using UPX.
 
 To unpack it, we run:
 
-upx -d unpackme-upx
+`upx -d unpackme-upx`
 
 ![Upx unpack output](screenshots/05-upx-unpack-output.png)
 
@@ -63,9 +63,7 @@ Immediately after, the input value is moved into `eax` and compared against the 
 
 ## Step 5 – Retrieving the Flag
 
-Converting `0x0B83CB` to decimal gives:
-
-754635
+Converting `0x0B83CB` to decimal gives `754635`.
 
 Providing this input results in successful execution and reveals the flag.
 
