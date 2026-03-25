@@ -1,4 +1,4 @@
-a# unpackme Writeup - picoCTF
+# unpackme Writeup - picoCTF
 
 **Category:** Reverse Engineering
 **Difficulty:** Medium
