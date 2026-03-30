@@ -1,9 +1,9 @@
 # casting-catastrophe Writeup - pwn.college
 
-**Category:** Memory Corruption
+**Category:** Memory Corruption  
 **Difficulty:** Hard
 
-This writeup describes the solution to the **"casting-catastrophe"** challenge from pwn.college.
+This writeup describes the solution to the **"casting-catastrophe"** challenge from pwn.college.  
 The goal is to exploit an **integer overflow vulnerability** in order to bypass a size check and ultimately perform a **buffer overflow**, redirecting execution to the `win()` function.
 
 ---
@@ -12,7 +12,7 @@ The goal is to exploit an **integer overflow vulnerability** in order to bypass 
 
 ![Welcome Banner](screenshots/01-welcome-banner.png)
 
-The program expects three inputs:
+The program expects 3 inputs:
 
 1. Number of payload records  
 2. Size of each record  
@@ -41,7 +41,7 @@ This check is intended to prevent sending input larger than the buffer.
 
 ## Step 2 – Initial Observation
 
-At first glance, this check prevents sending more than 82 bytes, blocking a classic buffer overflow.
+At first glance, this check prevents sending more than 82 bytes, blocking a classic buffer overflow.  
 
 ![Input Too Large Rejected](screenshots/03-input-too-large-rejected.png)
 
