@@ -47,7 +47,7 @@ At first glance, this check prevents sending more than 82 bytes, blocking a clas
 
 ### Input Handling
 
-The program reads user input using `scanf("%u", ...)`, which stores the values as **32-bit unsigned integers**.
+The program reads user input using `scanf("%u", ...)`, which stores the values as **32-bit unsigned integers**.  
 
 ![Scanf Input Handling Assembly](screenshots/04-scanf-input-handling-assembly.png)
 
@@ -63,11 +63,11 @@ Since the multiplication is performed using 32-bit registers, the result is trun
 
 If we choose values such that:
 
-count * size ≥ 2^32
+**count * size ≥ 2^32**
 
 The result wraps around (overflow) and becomes a small number.
 
-Example:
+**Example:**
 
 65536 * 65536 = 2^32 → 0 (in 32-bit)
 
@@ -102,14 +102,14 @@ Using GDB, we can analyze the stack layout to determine how the buffer and input
 
 ### Stack Layout
 
-- `count` → [rbp-0x74]  
-![Stack Layout Count](screenshots/07-stack-layout-count.png)
-- `size` → [rbp-0x78]  
-![Stack Layout Size ](screenshots/08-stack-layout-size.png)
-- buffer → [rbp-0x70].
-![Stack Layout Buffer](screenshots/09-stack-layout-buffer.png)
-The total input size is calculated as:
-[rbp-0x74] * [rbp-0x78]
+- `count` → [rbp-0x74]    
+![Stack Layout Count](screenshots/07-stack-layout-count.png)  
+- `size` → [rbp-0x78]   
+![Stack Layout Size ](screenshots/08-stack-layout-size.png)  
+- buffer → [rbp-0x70]  
+![Stack Layout Buffer](screenshots/09-stack-layout-buffer.png)  
+The total input size is calculated as:  
+[rbp-0x74] * [rbp-0x78]  
 ![Stack Layout Total Input Size](screenshots/10-stack-layout-total-input-size.png)
 
 The buffer is located at [rbp-0x70], closer to rbp than the input variables, meaning overflowing it allows overwriting saved frame data (including return address).
@@ -151,11 +151,11 @@ This payload:
 
 We provide the following values:
 
-count = 65536
-size  = 65536
+count = 65536;   
+size  = 65536;
 
-Which results in:
-count * size = 0 (mod 2^32)
+Which results in:  
+count * size = 0 (mod 2^32);
 
 Any pair of values whose product overflows 32-bit (mod 2^32) into a value ≤ 0x52 will bypass the check.
 
@@ -165,7 +165,7 @@ Any pair of values whose product overflows 32-bit (mod 2^32) into a value ≤ 0x
 This works because the size check is performed using 32-bit arithmetic (via the `eax` register), causing the result to wrap around.  
 However, the actual number of bytes passed to `read()` is computed later using 64-bit registers, allowing a much larger input to be read.
 
-The following script demonstrates the full exploit:
+The following script demonstrates the full exploit:  
 
 ![Final Exploit Script](screenshots/12-final-exploit-script.png)
 
