@@ -104,12 +104,12 @@ Using GDB, we can analyze the stack layout to determine how the buffer and input
 
 - `count` → [rbp-0x74]<br>  
 ![Stack Layout Count](screenshots/07-stack-layout-count.png)  
-- `size` → [rbp-0x78]<br> 
+<br>- `size` → [rbp-0x78]<br> 
 ![Stack Layout Size ](screenshots/08-stack-layout-size.png)  
-- buffer → [rbp-0x70]<br>
+<br>- buffer → [rbp-0x70]<br>
 ![Stack Layout Buffer](screenshots/09-stack-layout-buffer.png)  
 <br>The total input size is calculated as:  
-[rbp-0x74] * [rbp-0x78]    
+[rbp-0x74] * [rbp-0x78]<br>
 ![Stack Layout Total Input Size](screenshots/10-stack-layout-total-input-size.png)
 
 The buffer is located at [rbp-0x70], closer to rbp than the input variables, meaning overflowing it allows overwriting saved frame data (including return address).
