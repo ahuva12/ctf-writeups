@@ -16,7 +16,7 @@ The program expects 3 inputs:
 
 1. Number of payload records  
 2. Size of each record  
-3. The payload itself  
+3. The payload itself<br>
 
 ![Initial Inputs Random Values](screenshots/02-initial-inputs-random-values.png)
 
@@ -41,13 +41,13 @@ This check is intended to prevent sending input larger than the buffer.
 
 ## Step 2 – Initial Observation
 
-At first glance, this check prevents sending more than 82 bytes, blocking a classic buffer overflow.  
+At first glance, this check prevents sending more than 82 bytes, blocking a classic buffer overflow<br> 
 
 ![Input Too Large Rejected](screenshots/03-input-too-large-rejected.png)
 
 ### Input Handling
 
-The program reads user input using `scanf("%u", ...)`, which stores the values as **32-bit unsigned integers**.  
+The program reads user input using `scanf("%u", ...)`, which stores the values as **32-bit unsigned integers**.<br>
 
 ![Scanf Input Handling Assembly](screenshots/04-scanf-input-handling-assembly.png)
 
@@ -133,8 +133,7 @@ Our goal is to overwrite the return address with this value.
 
 ## Step 7 – Crafting the Payload
 
-Final payload:
-
+Final payload:  
 ```
 payload = b"A" * 120 + p64(0x4014b6)
 ```
