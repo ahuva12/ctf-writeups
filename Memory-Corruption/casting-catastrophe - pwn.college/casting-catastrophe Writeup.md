@@ -102,7 +102,7 @@ Using GDB, we can analyze the stack layout to determine how the buffer and input
 
 ### Stack Layout
 
-`count` → [rbp-0x74]<br>  
+`count` → [rbp-0x74] 
 ![Stack Layout Count](screenshots/07-stack-layout-count.png)  
 <br>`size` → [rbp-0x78]<br> 
 ![Stack Layout Size ](screenshots/08-stack-layout-size.png)  
