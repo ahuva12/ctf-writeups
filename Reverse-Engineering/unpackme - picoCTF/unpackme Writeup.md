@@ -1,6 +1,6 @@
 # unpackme Writeup - picoCTF
 
-**Category:** Reverse Engineering
+**Category:** Reverse Engineering  
 **Difficulty:** Medium
 
 This writeup describes the solution to the **"unpackme"** challenge from picoCTF.
