@@ -110,6 +110,7 @@ Using GDB, we can analyze the stack layout to determine how the buffer and input
 ![Stack Layout Buffer](screenshots/09-stack-layout-buffer.png)  
 The total input size is calculated as:  
 [rbp-0x74] * [rbp-0x78]  
+<br>
 ![Stack Layout Total Input Size](screenshots/10-stack-layout-total-input-size.png)
 
 The buffer is located at [rbp-0x70], closer to rbp than the input variables, meaning overflowing it allows overwriting saved frame data (including return address).
@@ -151,11 +152,11 @@ This payload:
 
 We provide the following values:
 
-count = 65536;   
-size  = 65536;
+count = 65536   
+size  = 65536
 
 Which results in:  
-count * size = 0 (mod 2^32);
+count * size = 0 (mod 2^32)
 
 Any pair of values whose product overflows 32-bit (mod 2^32) into a value ≤ 0x52 will bypass the check.
 
