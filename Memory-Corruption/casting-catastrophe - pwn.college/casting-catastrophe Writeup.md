@@ -69,7 +69,9 @@ The result wraps around (overflow) and becomes a small number.
 
 **Example:**
 
-```65536 * 65536 = 2^32 → 0 (in 32-bit)```
+```
+65536 * 65536 = 2^32 → 0 (in 32-bit)
+```
 
 As a result:
 
@@ -117,7 +119,9 @@ The buffer is located at [rbp-0x70], closer to rbp than the input variables, mea
 From GDB, we determine that the offset from the start of the buffer to the saved return address is **120 bytes**. 
 Therefore, to overwrite the return address, we need a payload like:
 
-```b"A" * 120```
+```
+b"A" * 120
+```
 
 ---
 
@@ -149,12 +153,14 @@ This payload:
 ## Step 8 – Triggering the Overflow
 
 We provide the following values:
-
+```
 count = 65536   
 size  = 65536
-
+```
 Which results in:  
+```
 count * size = 0 (mod 2^32)
+```
 
 Any pair of values whose product overflows 32-bit (mod 2^32) into a value ≤ 0x52 will bypass the check.
 
