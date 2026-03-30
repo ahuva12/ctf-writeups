@@ -108,7 +108,7 @@ Using GDB, we can analyze the stack layout to determine how the buffer and input
 ![Stack Layout Size ](screenshots/08-stack-layout-size.png)  
 - buffer → [rbp-0x70]  
 ![Stack Layout Buffer](screenshots/09-stack-layout-buffer.png)  
-The total input size is calculated as:  
+<br>The total input size is calculated as:  
 [rbp-0x74] * [rbp-0x78]<br>    
 ![Stack Layout Total Input Size](screenshots/10-stack-layout-total-input-size.png)
 
