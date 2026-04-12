@@ -4,7 +4,7 @@
 **Difficulty:** Hard
 
 This writeup describes the solution to the **"anomalous-array"** challenge from pwn.college.  
-The goal is ...
+The goal is to exploit an out-of-bounds array access vulnerability in order to read arbitrary memory from the stack and ultimately leak the flag.
 
 ---
 
@@ -91,11 +91,13 @@ The successful exploitation confirms full control over the program’s execution
 
 ## Summary and Insights
 
-A classic buffer overflow allows overwriting the **saved return address**, redirecting execution to a chosen function such as `win()`.
+This challenge demonstrates how improper bounds checking on array indices can lead to **out-of-bounds memory access**.
 
-In this challenge, however, a size check prevents sending a payload large enough to reach the return address. To bypass this restriction, we exploit a **32-bit integer overflow** in the size calculation.
+By allowing negative indices, the program enables reading memory located *before* the array on the stack. This makes it possible to leak sensitive data, such as the flag.
 
-By supplying carefully chosen input values, the multiplication overflows and produces a truncated result that passes the check, while still allowing us to send a much larger payload in practice.
+Additionally, the challenge highlights an important detail: even when memory is accessed in fixed-size chunks (e.g., 8 bytes), it is still possible to reconstruct larger secrets by repeatedly querying adjacent memory locations.
 
-This demonstrates how unsafe arithmetic operations can undermine security checks, ultimately enabling control flow hijacking.
+This is a classic example of how **information disclosure vulnerabilities** can arise from seemingly simple logic flaws, without requiring control over execution flow.
+
+להוסיף שאלה לצאט - שיעצב לי את זה
 
