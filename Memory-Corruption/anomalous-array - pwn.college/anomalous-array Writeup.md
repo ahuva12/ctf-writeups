@@ -36,8 +36,7 @@ The program first prints the prompt:
 Which number would you like to view?
 ```
 
-
-![Scanf Index Input](screenshots/04-scanf-index-input.png)
+<br>![Scanf Index Input](screenshots/04-scanf-index-input.png)
 
 User input is read using `scanf`, which stores the provided index.
 
@@ -103,8 +102,7 @@ Using this negative index allows access to the beginning of the flag.
 
 ## Step 6 – Exploitation Strategy
 
-
-![Printf Format Hex](screenshots/09-printf-format-hex.png)
+<br>![Printf Format Hex](screenshots/09-printf-format-hex.png)
 
 The output is printed using `%lx`, meaning:
 
