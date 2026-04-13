@@ -30,11 +30,12 @@ To better understand the program’s behavior, we analyze it using GDB.
 
 ![Printf Prompt](screenshots/03-printf-prompt.png)
 
-The program first prints the prompt:
+The program first prints the prompt:  
 
 ```
 Which number would you like to view?
 ```
+
 
 ![Scanf Index Input](screenshots/04-scanf-index-input.png)
 
@@ -101,6 +102,7 @@ Using this negative index allows access to the beginning of the flag.
 ---
 
 ## Step 6 – Exploitation Strategy
+
 
 ![Printf Format Hex](screenshots/09-printf-format-hex.png)
 
