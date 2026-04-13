@@ -20,7 +20,7 @@ This suggests that the program retrieves values from an internal array.
 ![Additional Input Exploration](screenshots/02-additional-input-exploration.png)
 
 Trying additional inputs confirms that different indices return different values.  
-This indicates that user input is directly used as an array index.1
+This indicates that user input is directly used as an array index.
 
 ---
 
