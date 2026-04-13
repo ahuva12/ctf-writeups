@@ -10,7 +10,7 @@ The goal is to exploit an **out-of-bounds array access vulnerability** in order 
 
 ## Step 1 – Understanding the Challenge
 
-![Initial Attempt](screenshots/01-initial-attempt.png)
+<br>![Initial Attempt](screenshots/01-initial-attempt.png)
 
 The program asks the user to choose an index to view.
 
@@ -28,7 +28,7 @@ This indicates that user input is directly used as an array index.
 
 To better understand the program’s behavior, we analyze it using GDB.
 
-![Printf Prompt](screenshots/03-printf-prompt.png)
+<br>![Printf Prompt](screenshots/03-printf-prompt.png)
 
 The program first prints the prompt:  
 
@@ -40,7 +40,7 @@ Which number would you like to view?
 
 User input is read using `scanf`, which stores the provided index.
 
-![Array Index Output](screenshots/05-array-index-output.png)
+<br>![Array Index Output](screenshots/05-array-index-output.png)
 
 The program then uses this index to access an array and prints the corresponding value.
 
