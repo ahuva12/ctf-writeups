@@ -1,78 +1,136 @@
 # keygenme Writeup - picoCTF
 
 **Category:** Reverse Engineering  
-**Difficulty:** Hard
+**Difficulty:** Hard  
 
-This writeup describes the solution to the **"unpackme"** challenge from picoCTF.
+This writeup describes the solution to the **"keygenme"** challenge from picoCTF.
 
-The goal of the challenge is to unpack a compressed binary and reverse engineer it in order to retrieve the flag.
+The goal of the challenge is to reverse engineer the binary in order to understand how the license key is generated and provide a valid key that passes the program's verification logic.
 
 ---
 
 ## Step 1 – Downloading the Challenge
 
-I opened the picoCTF challenge and downloaded the provided files.
+I downloaded the provided binary from the picoCTF challenge page.
 
 ![Challenge page](screenshots/01-challenge-page.png)
 
 ---
 
-## Step 2 – First Attempt at Probing
+## Step 2 – Initial Analysis
 
 ![Initial attempt](screenshots/02-initial-attempt.png)
 
-Providing a simple input such as `"111"` does not reveal the valid key, indicating that further analysis is required.
+Providing a simple input such as `"111"` does not result in a valid key, indicating that the program performs some internal validation.
 
-When opening the binary in **IDA**, the code appears incomplete. This suggests that the binary might be packed or compressed.
+Opening the binary in **IDA** reveals incomplete or unclear logic, suggesting that the binary might be packed or obfuscated.
 
-![Ida-packed-binary](screenshots/03-ida-packed-binary.png)
-
----
-
-## Step 3 – Strat of Research
-
-![Upx test output](screenshots/04-upx-test-output.png)
-
-The fgets function requests input from the user. It sends it to the "checking_input" function. For this will print "That is vaild" - I need that this function will return not zeru value. Let's dive into the checking_input function. I changed the name for the convenience of reverse engineering.
+![IDA packed binary](screenshots/03-ida-packed-binary.png)
 
 ---
 
-## Step 4 – Reverse engineering checking_input function
+## Step 3 – Identifying the Validation Function
 
-These are the possible return values ​​for the function. There is only one possibility that it will return a value other than 0.
+![Function overview](screenshots/04-.png)
 
-![Scanf call disassembly](screenshots/07-scanf-call-disassembly.png)
+The program reads user input using `fgets` and passes it to a function responsible for validation (renamed to `validate_key` for clarity).
 
-Now we will try to understand how to make the checking_input function return 1.
+In order to retrieve the flag, this function must return a non-zero value.
 
-![Scanf call disassembly](screenshots/07-scanf-call-disassembly.png)
+---
 
-First thing – store the input in rbp+var_D8. This is very important for further understanding.
+## Step 4 – Reverse Engineering the Validation Logic
 
-We'll see you next time we meet the input:
+![Return paths](screenshots/05-.png)
 
-![Scanf call disassembly](screenshots/07-scanf-call-disassembly.png)
+The function has multiple return paths, but only one leads to a successful validation (return value `1`).
 
-The strlen function tells us that the input must be exactly 0x24 (36 bytes) long.
+To understand how to reach this path, we analyze the function step by step.
+
+---
+
+### Step 4.1 – Input Handling
+
+![Input storage](screenshots/07-.png)
+
+The user input is stored in a buffer (`var_D8`).
+
+---
+
+### Step 4.2 – Key Construction
+
+![Key construction](screenshots/08-.png)
+
+The program constructs a base string in a buffer (renamed to `generated_key` for clarity):
+
+picoCTF{br1ng_y0ur_0wn_k3y_
+
+This string is stored in chunks and later combined into a single buffer.
+
+---
+
+### Step 4.3 – MD5 Hashing
+
+![MD5 call](screenshots/09-.png)
+
+The program computes the **MD5 hash** of the base string.
+
+The hash is then converted into a hexadecimal string representation.
+
+---
+
+### Step 4.4 – Final Key Generation
+
+![Key modification](screenshots/10-.png)
+
+The constructed key (`generated_key`) is copied into another buffer (`var_30`) and modified using part of the computed hash.
+
+Specifically, a portion of the MD5 hash (converted to hexadecimal) is appended to the base string.
+
+The final generated key becomes:
+
+picoCTF{br1ng_y0ur_0wn_k3y_19836cd8}
+
+---
+
+### Step 4.5 – Length Check and Comparison
+
+The program verifies that the input length is exactly `0x24` (36 bytes), which matches the generated key length.
+
+It then compares:
+
+- User input (`var_D8`)
+- Generated key (`var_30`)
+
+If they are equal, the function returns `1`, indicating a valid key.
 
 ---
 
 ## Step 5 – Retrieving the Flag
 
-Converting `0x0B83CB` to decimal gives `754635`.
+Providing the generated key:
 
-Providing this input results in successful execution and reveals the flag.
+picoCTF{br1ng_y0ur_0wn_k3y_19836cd8}
+
+
+results in successful execution and reveals the flag.
 
 ![Successful execution flag](screenshots/09-successful-execution-flag.png)
 
-The challenge confirms that the exploit worked successfully.
-
-![PicoCTF flag submission](screenshots/10-picoCTF-flag-submission.png)
+![Flag submission](screenshots/10-picoCTF-flag-submission.png)
 
 ---
 
 ## Summary and Insights
 
-This challenge demonstrates the importance of **identifying packed binaries and properly unpacking** them before performing reverse engineering.
+This challenge demonstrates a classic **keygenme pattern**, where the program generates a valid key internally and compares it to user input.
 
-Once unpacked, **standard analysis tools** such as IDA can be used to trace program logic and identify the required input.
+By reversing the binary, we can reconstruct the key generation logic and recover the correct input directly.
+
+Key takeaways:
+
+- Validation logic is often deterministic and can be reversed.
+- Even when hashes are used, the final value can be recovered if the full computation is visible.
+- Many checks ultimately reduce to a simple string comparison.
+
+This highlights how reverse engineering can be used to derive valid inputs without guessing.
