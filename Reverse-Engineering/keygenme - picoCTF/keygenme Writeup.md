@@ -25,23 +25,23 @@ Providing a simple input such as `"111"` does not result in a valid key, indicat
 
 Opening the binary in **IDA** reveals incomplete or unclear logic, suggesting that the binary might be packed or obfuscated.
 
-![IDA packed binary](screenshots/03-ida-packed-binary.png)
+![Ida overview](screenshots/03-ida-overview.png)
 
 ---
 
 ## Step 3 – Identifying the Validation Function
 
-![Function overview](screenshots/04-.png)
+![Input flow fgets validate key](screenshots/04-input-flow-fgets-validate-key.png)
 
 The program reads user input using `fgets` and passes it to a function responsible for validation (renamed to `validate_key` for clarity).
 
-In order to retrieve the flag, this function must return a non-zero value.
+In order for the program to accept the input as valid (i.e., print "That key is valid"), this function must return a non-zero value.  
 
 ---
 
 ## Step 4 – Reverse Engineering the Validation Logic
 
-![Return paths](screenshots/05-.png)
+![Validate key return paths](screenshots/05-validate-key-return-paths.png)
 
 The function has multiple return paths, but only one leads to a successful validation (return value `1`).
 
@@ -51,7 +51,7 @@ To understand how to reach this path, we analyze the function step by step.
 
 ### Step 4.1 – Input Handling
 
-![Input storage](screenshots/07-.png)
+![Input buffer varD8](screenshots/06-input-buffer-varD8.png)
 
 The user input is stored in a buffer (`var_D8`).
 
@@ -59,11 +59,13 @@ The user input is stored in a buffer (`var_D8`).
 
 ### Step 4.2 – Key Construction
 
-![Key construction](screenshots/08-.png)
+![Generated key construction](screenshots/07-generated-key-construction.png)
 
-The program constructs a base string in a buffer (renamed to `generated_key` for clarity):
+The program constructs a base string in a buffer (renamed to `generated_key` for clarity), storing it in memory as hexadecimal values (as seen in the image):
 
+```
 picoCTF{br1ng_y0ur_0wn_k3y_
+```
 
 This string is stored in chunks and later combined into a single buffer.
 
@@ -71,31 +73,39 @@ This string is stored in chunks and later combined into a single buffer.
 
 ### Step 4.3 – MD5 Hashing
 
-![MD5 call](screenshots/09-.png)
+![MD5 call](screenshots/08-md5-call.png)
 
 The program computes the **MD5 hash** of the base string.
 
-The hash is then converted into a hexadecimal string representation.
+The hash is then converted into a hexadecimal string representation:
+
+![Hash to hex](screenshots/09-hash-to-hex.png)
 
 ---
 
 ### Step 4.4 – Final Key Generation
 
-![Key modification](screenshots/10-.png)
+![Append hash to key](screenshots/10-append-hash-to-key.png)
 
-The constructed key (`generated_key`) is copied into another buffer (`var_30`) and modified using part of the computed hash.
+The constructed key (`generated_key`) is copied into another buffer (`var_30`) and modified by appending part of the computed hash.
 
 Specifically, a portion of the MD5 hash (converted to hexadecimal) is appended to the base string.
 
 The final generated key becomes:
 
+```
 picoCTF{br1ng_y0ur_0wn_k3y_19836cd8}
+```
 
 ---
 
 ### Step 4.5 – Length Check and Comparison
 
-The program verifies that the input length is exactly `0x24` (36 bytes), which matches the generated key length.
+![Length check 0x24](screenshots/11-length-check-0x24.png)
+
+The program verifies that the input length is exactly `0x24` (36 bytes), which matches the **generated key length**.
+
+![Input vs generated key comparison](screenshots/12-input-vs-generated-key-comparison.png)
 
 It then compares:
 
@@ -104,20 +114,29 @@ It then compares:
 
 If they are equal, the function returns `1`, indicating a valid key.
 
+At this point, the required input is fully reconstructed.
+
 ---
 
 ## Step 5 – Retrieving the Flag
 
 Providing the generated key:
 
+```
 picoCTF{br1ng_y0ur_0wn_k3y_19836cd8}
+```
 
+results in successful execution and the program prints:
 
-results in successful execution and reveals the flag.
+```
+That key is valid
+```
 
-![Successful execution flag](screenshots/09-successful-execution-flag.png)
+![Successful execution flag](screenshots/13-successful-execution-flag.png)
 
-![Flag submission](screenshots/10-picoCTF-flag-submission.png)
+This confirms that the reconstructed key is correct.
+
+![PicoCTF flag submission](screenshots/14-picoCTF-flag-submission.png)
 
 ---
 
