@@ -41,7 +41,7 @@ In order for the program to accept the input as valid (i.e., print "That key is 
 
 ## Step 4 – Reverse Engineering the Validation Logic
 
-<br>![Validate key return paths](screenshots/05-validate-key-return-paths.png)
+![Validate key return paths](screenshots/05-validate-key-return-paths.png)
 
 The function has multiple return paths, but only one leads to a successful validation (return value `1`).
 
