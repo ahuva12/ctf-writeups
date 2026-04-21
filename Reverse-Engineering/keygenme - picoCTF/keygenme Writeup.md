@@ -13,7 +13,7 @@ The goal of the challenge is to reverse engineer the binary in order to understa
 
 I downloaded the provided binary from the picoCTF challenge page.
 
-![Challenge page](screenshots/01-challenge-page.png)
+<br>![Challenge page](screenshots/01-challenge-page.png)
 
 ---
 
