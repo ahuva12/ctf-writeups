@@ -45,7 +45,7 @@ In order for the program to accept the input as valid (i.e., print "That key is 
 
 The function has multiple return paths, but only one leads to a successful validation (return value `1`).
 
-To understand how to reach this path, we analyze the function step by step.1
+To understand how to reach this path, we analyze the function step by step.
 
 ---
 
