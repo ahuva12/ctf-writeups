@@ -16,7 +16,7 @@ The program asks the user to choose an index to view.
 
 When selecting index `1`, the program prints the value `0x1337c0de`.  
 This suggests that the program retrieves values from an internal array.
-
+1
 ![Additional Input Exploration](screenshots/02-additional-input-exploration.png)
 
 Trying additional inputs confirms that different indices return different values.  
