@@ -1,5 +1,5 @@
 # anomalous-array Writeup - pwn.college
-1
+
 **Category:** Memory Corruption  
 **Difficulty:** Hard  
 
