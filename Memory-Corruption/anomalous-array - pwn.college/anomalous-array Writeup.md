@@ -29,7 +29,7 @@ This indicates that user input is directly used as an array index.
 To better understand the program’s behavior, we analyze it using GDB.
 
 <br>![Printf Prompt](screenshots/03-printf-prompt.png)
-1
+
 The program first prints the prompt:  
 
 ```
